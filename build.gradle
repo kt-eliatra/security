@@ -183,10 +183,10 @@ dependencies {
     testImplementation 'org.apache.logging.log4j:log4j-core:2.17.1'
     testImplementation 'commons-io:commons-io:2.7'
     testImplementation 'org.hamcrest:hamcrest-all:1.3'
-    testImplementation 'junit:junit:4.13.1'
+    testImplementation 'junit:junit:4.13.2'
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
     testImplementation 'org.apache.httpcomponents:fluent-hc:4.5.13'
-    testImplementation 'org.mockito:mockito-core:2.23.0'
+    testImplementation 'org.mockito:mockito-core:4.3.1'
     testImplementation 'org.springframework.kafka:spring-kafka-test:2.8.5'
     testImplementation 'org.springframework.retry:spring-retry:1.3.3'
     testImplementation 'org.springframework:spring-beans:5.3.19'
@@ -206,8 +206,9 @@ dependencies {
     testImplementation 'org.apache.kafka:kafka_2.13:3.0.1'
     testImplementation 'org.apache.kafka:kafka_2.13:3.0.1:test'
     testImplementation 'org.apache.kafka:kafka-clients:3.0.1:test'
-    testImplementation 'net.bytebuddy:byte-buddy:1.9.0'
-    testImplementation 'org.objenesis:objenesis:2.6'
+    testImplementation 'net.bytebuddy:byte-buddy:1.12.7'
+    testImplementation 'org.objenesis:objenesis:3.2'
+    javaRestTestImplementation "io.github.hakky54:sslcontext-kickstart-for-pem:7.4.3"
     compileOnly "org.opensearch:opensearch:${opensearch_version}"
 }
 
@@ -417,6 +418,60 @@ task createPluginDescriptor() {
 }
 bundle.doLast() {
     new File("plugin-descriptor.properties").delete()
+}
+
+testClusters {
+    javaRestTest {
+        testDistribution = "ARCHIVE"
+//        numberOfNodes = 2
+
+        extraConfigFile(
+                "root-ca.pem",
+                rootProject.file('src/javaRestTest/resources/root-ca.pem')
+        )
+
+        def nodeNumber = 1
+        nodes.forEach { node ->
+
+            node.extraConfigFile(
+                    "node${nodeNumber}.pem",
+                    rootProject.file("src/javaRestTest/resources/node${nodeNumber}.pem")
+            )
+            node.extraConfigFile(
+                    "node${nodeNumber}.key",
+                    rootProject.file("src/javaRestTest/resources/node${nodeNumber}.key")
+            )
+            node.extraConfigFile(
+                    "node${nodeNumber}_http.pem",
+                    rootProject.file("src/javaRestTest/resources/node${nodeNumber}.pem")
+            )
+            node.extraConfigFile(
+                    "node${nodeNumber}_http.key",
+                    rootProject.file("src/javaRestTest/resources/node${nodeNumber}.key")
+            )
+
+            node.setting("plugins.security.ssl.transport.pemcert_filepath", "node${nodeNumber}.pem")
+            node.setting("plugins.security.ssl.transport.pemkey_filepath", "node${nodeNumber}.key")
+            node.setting("plugins.security.ssl.transport.pemtrustedcas_filepath", "root-ca.pem")
+            node.setting("plugins.security.ssl.transport.enabled", "true")
+            node.setting("plugins.security.ssl.transport.enforce_hostname_verification", "false")
+            node.setting("plugins.security.ssl.http.enabled", "true")
+            node.setting("plugins.security.ssl.http.pemcert_filepath", "node${nodeNumber}_http.pem")
+            node.setting("plugins.security.ssl.http.pemkey_filepath", "node${nodeNumber}_http.key")
+            node.setting("plugins.security.ssl.http.pemtrustedcas_filepath", "root-ca.pem")
+            node.setting("plugins.security.authcz.admin_dn", "\n  - CN=kirk,OU=client,O=client,L=Test,C=DE")
+            node.setting("plugins.security.allow_default_init_securityindex", "true")
+
+            nodeNumber++
+        }
+
+        plugin(project.tasks.bundle.archiveFile)
+    }
+}
+
+javaRestTest {
+    systemProperty "tests.security.manager", "false"
+    useCluster testClusters.javaRestTest
 }
 
 tasks.assemble.dependsOn(bundle)
