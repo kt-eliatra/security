@@ -209,6 +209,12 @@ dependencies {
     testImplementation 'net.bytebuddy:byte-buddy:1.12.7'
     testImplementation 'org.objenesis:objenesis:3.2'
     javaRestTestImplementation "io.github.hakky54:sslcontext-kickstart-for-pem:7.4.3"
+    javaRestTestImplementation ("org.opensearch:opensearch-security:${opensearch_version}") {
+        exclude(group: 'org.slf4j', module: 'slf4j-api')
+        exclude(group: 'org.bouncycastle', module: 'bcprov-jdk15on')
+    }
+    javaRestTestImplementation "org.opensearch.client:opensearch-rest-high-level-client:${opensearch_version}"
+    javaRestTestImplementation 'commons-io:commons-io:2.7'
     compileOnly "org.opensearch:opensearch:${opensearch_version}"
 }
 
@@ -427,7 +433,7 @@ testClusters {
 
         extraConfigFile(
                 "root-ca.pem",
-                rootProject.file('src/javaRestTest/resources/root-ca.pem')
+                rootProject.file('src/javaRestTest/resources/certs/root-ca.pem')
         )
 
         def nodeNumber = 1
@@ -435,19 +441,19 @@ testClusters {
 
             node.extraConfigFile(
                     "node${nodeNumber}.pem",
-                    rootProject.file("src/javaRestTest/resources/node${nodeNumber}.pem")
+                    rootProject.file("src/javaRestTest/resources/certs/node${nodeNumber}.pem")
             )
             node.extraConfigFile(
                     "node${nodeNumber}.key",
-                    rootProject.file("src/javaRestTest/resources/node${nodeNumber}.key")
+                    rootProject.file("src/javaRestTest/resources/certs/node${nodeNumber}.key")
             )
             node.extraConfigFile(
                     "node${nodeNumber}_http.pem",
-                    rootProject.file("src/javaRestTest/resources/node${nodeNumber}.pem")
+                    rootProject.file("src/javaRestTest/resources/certs/node${nodeNumber}.pem")
             )
             node.extraConfigFile(
                     "node${nodeNumber}_http.key",
-                    rootProject.file("src/javaRestTest/resources/node${nodeNumber}.key")
+                    rootProject.file("src/javaRestTest/resources/certs/node${nodeNumber}.key")
             )
 
             node.setting("plugins.security.ssl.transport.pemcert_filepath", "node${nodeNumber}.pem")
@@ -459,8 +465,7 @@ testClusters {
             node.setting("plugins.security.ssl.http.pemcert_filepath", "node${nodeNumber}_http.pem")
             node.setting("plugins.security.ssl.http.pemkey_filepath", "node${nodeNumber}_http.key")
             node.setting("plugins.security.ssl.http.pemtrustedcas_filepath", "root-ca.pem")
-            node.setting("plugins.security.authcz.admin_dn", "\n  - CN=kirk,OU=client,O=client,L=Test,C=DE")
-            node.setting("plugins.security.allow_default_init_securityindex", "true")
+            node.setting("plugins.security.authcz.admin_dn", "\n- CN=kirk,OU=client,O=client,L=Test,C=DE")
 
             nodeNumber++
         }

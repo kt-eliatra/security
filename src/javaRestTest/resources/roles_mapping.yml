@@ -1,0 +1,11 @@
+---
+_meta:
+  type: "rolesmapping"
+  config_version: 2
+role-a:
+  users:
+    - "user-a"
+
+role-b:
+  users:
+    - "user-b"
