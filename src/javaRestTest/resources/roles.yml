@@ -1,0 +1,20 @@
+---
+_meta:
+  type: "roles"
+  config_version: 2
+role-a:
+  index_permissions:
+    - index_patterns:
+        - "index-a"
+      allowed_actions:
+        - "*"
+role-b:
+  index_permissions:
+    - index_patterns:
+        - "index-a"
+      allowed_actions:
+        - read
+    - index_patterns:
+        - "index-b"
+      allowed_actions:
+        - "*"

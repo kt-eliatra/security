@@ -1,0 +1,8 @@
+---
+_meta:
+  type: "internalusers"
+  config_version: 2
+user-a:
+  hash: "$2y$12$kNPvNb5Pic1E42PNmpCnK.U6fOoMrHJU28B5vwtd/BWutt6vk.OLW"
+user-b:
+  hash: "$2y$12$kNPvNb5Pic1E42PNmpCnK.U6fOoMrHJU28B5vwtd/BWutt6vk.OLW"

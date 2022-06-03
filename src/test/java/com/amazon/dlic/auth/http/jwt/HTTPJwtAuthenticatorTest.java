@@ -30,11 +30,11 @@ import com.google.common.io.BaseEncoding;
 import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.http.HttpHeaders;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
-import org.mockito.internal.util.reflection.FieldSetter;
 
 import org.opensearch.common.settings.Settings;
 import org.opensearch.security.user.AuthCredentials;
@@ -191,14 +191,14 @@ public class HTTPJwtAuthenticatorTest {
         Settings settings = Settings.builder().put("signing_key", BaseEncoding.base64().encode(secretKey)).build();
         HTTPJwtAuthenticator jwtAuth = new HTTPJwtAuthenticator(settings, null);
         JwtParser jwtParser = Mockito.spy(JwtParser.class);
-        FieldSetter.setField(jwtAuth, HTTPJwtAuthenticator.class.getDeclaredField("jwtParser"), jwtParser);
+        FieldUtils.writeDeclaredField(jwtAuth, "jwtParser", jwtParser, true);
 
         String basicAuth = BaseEncoding.base64().encode("user:password".getBytes(StandardCharsets.UTF_8));
         Map<String, String> headers = Collections.singletonMap(HttpHeaders.AUTHORIZATION, "Basic " + basicAuth);
 
         AuthCredentials creds = jwtAuth.extractCredentials(new FakeRestRequest(headers, Collections.emptyMap()), null);
         Assert.assertNull(creds);
-        Mockito.verifyZeroInteractions(jwtParser);
+        Mockito.verifyNoInteractions(jwtParser);
     }
 
     @Test
