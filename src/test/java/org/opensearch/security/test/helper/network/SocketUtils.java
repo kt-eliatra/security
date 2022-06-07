@@ -223,7 +223,7 @@ public class SocketUtils {
     }
 
 
-    private enum SocketType {
+    public enum SocketType {
 
         TCP {
             @Override

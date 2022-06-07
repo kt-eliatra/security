@@ -82,6 +82,7 @@ configurations.all {
         force "org.apache.commons:commons-lang3:3.4"
         force "org.springframework:spring-core:5.3.20"
         force "com.google.guava:guava:30.0-jre"
+        force "com.fasterxml.jackson.core:jackson-databind:2.13.2"
     }
 }
 
@@ -217,6 +218,15 @@ testsJar {
 
     libsDirName = '.'
 }
+
+task copyResourcesUsedInTests(type: Copy) {
+    into("${buildDir}/resources/test")
+
+    from("${projectDir}/plugin-security.policy") {
+    }
+}
+
+test.dependsOn copyResourcesUsedInTests
 
 
 test {
