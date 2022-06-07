@@ -2,7 +2,11 @@ package org.opensearch.security.privileges;
 
 import com.google.common.collect.ImmutableMap;
 import org.hamcrest.MatcherAssert;
-import org.junit.*;
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.ClassRule;
+import org.junit.Ignore;
+import org.junit.Test;
 import org.opensearch.OpenSearchStatusException;
 import org.opensearch.action.DocWriteResponse;
 import org.opensearch.action.admin.indices.alias.IndicesAliasesRequest;
@@ -34,8 +38,13 @@ import org.opensearch.security.test.helper.cluster.newstyle.TestSgConfig.Role;
 import org.opensearch.security.test.helper.rest.GenericRestClient;
 import org.opensearch.security.test.helper.rest.GenericRestClient.HttpResponse;
 
-import static org.hamcrest.Matchers.*;
-import static org.opensearch.security.test.RestMatchers.*;
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.equalTo;
+import static org.opensearch.security.test.RestMatchers.isForbidden;
+import static org.opensearch.security.test.RestMatchers.isOk;
+import static org.opensearch.security.test.RestMatchers.json;
+import static org.opensearch.security.test.RestMatchers.nodeAt;
 
 public class PrivilegesEvaluatorNewStyleTest {
 

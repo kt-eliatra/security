@@ -26,7 +26,11 @@ import org.opensearch.secure_sm.SecureSM;
 
 import java.io.FilePermission;
 import java.net.SocketPermission;
-import java.security.*;
+import java.security.AccessControlException;
+import java.security.Permission;
+import java.security.Permissions;
+import java.security.Policy;
+import java.security.ProtectionDomain;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;

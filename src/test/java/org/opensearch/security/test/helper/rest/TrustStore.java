@@ -2,7 +2,10 @@ package org.opensearch.security.test.helper.rest;
 
 import org.opensearch.security.support.PemKeyReader;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.nio.file.Path;
 import java.security.KeyStore;
 import java.security.cert.X509Certificate;

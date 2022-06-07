@@ -17,12 +17,10 @@
 
 package org.opensearch.security.test.helper.cluster.newstyle;
 
-import com.google.common.collect.ImmutableMap;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.opensearch.action.admin.indices.create.CreateIndexRequest;
 import org.opensearch.action.index.IndexRequest;
-import org.opensearch.action.support.WriteRequest;
 import org.opensearch.action.support.WriteRequest.RefreshPolicy;
 import org.opensearch.client.Client;
 import org.opensearch.common.bytes.BytesReference;
@@ -38,7 +36,11 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class TestSgConfig {
