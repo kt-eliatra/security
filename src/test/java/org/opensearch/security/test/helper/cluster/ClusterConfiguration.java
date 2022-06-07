@@ -30,6 +30,7 @@
 
 package org.opensearch.security.test.helper.cluster;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -133,6 +134,17 @@ public enum ClusterConfiguration {
 		
 		public Class<? extends Plugin>[] getPlugins() {
 		    return plugins.toArray(new Class[0] );
+		}
+
+		@SuppressWarnings("unchecked")
+		public Class<? extends Plugin>[] getPlugins(List<Class<? extends Plugin>> additionalPlugins) {
+			List<Class<? extends Plugin>> plugins = new ArrayList<>(this.plugins);
+
+			if (additionalPlugins != null) {
+				plugins.addAll(additionalPlugins);
+			}
+
+			return plugins.toArray(new Class[0]);
 		}
 	}
 }
